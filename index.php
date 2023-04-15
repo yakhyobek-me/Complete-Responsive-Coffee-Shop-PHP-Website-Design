@@ -2,18 +2,18 @@
 
 $db_name = 'mysql:host=localhost;dbname=contact_db';
 $username = 'root';
-$password = '';
+$password = 'secret';
 
 $conn = new PDO($db_name, $username, $password);
 
 if(isset($_POST['send'])){
 
    $name = $_POST['name'];
-   $name = filter_var($name, FILTER_SANITIZE_STRING);
+   $name = filter_var($name);
    $number = $_POST['number'];
-   $number = filter_var($number, FILTER_SANITIZE_STRING);
+   $number = filter_var($number);
    $guests = $_POST['guests'];
-   $guests = filter_var($guests, FILTER_SANITIZE_STRING);
+   $guests = filter_var($guests);
 
    $select_contact = $conn->prepare("SELECT * FROM `contact_form` WHERE name = ? AND number = ? AND guests = ?");
    $select_contact->execute([$name, $number, $guests]);
@@ -47,20 +47,33 @@ if(isset($_POST['send'])){
 </head>
 <body>
 
-<?php
+   <?php
+    if(isset($message)){
+        foreach($message as $message){
+            echo '
+            <div class="message" style="
+               position: sticky;
+               top: 0;
+               z-index: 1100;
+               background: var(--main-color);
+               padding: 2rem;
+               display: flex;
+               align-items: center;
+               justify-content: space-between;
+               gap: 1.5rem;
+               max-width: 1200px;
+               margin: 0 auto;">
+               <span style="color: var(--white);
+               font-size: 2rem;">'.$message.'</span>
 
-if(isset($message)){
-   foreach($message as $message){
-      echo '
-      <div class="message">
-         <span>'.$message.'</span>
-         <i class="fas fa-times" onclick="this.parentElement.remove();"></i>
-      </div>
-      ';
-   }
-}
-
-?>
+               <i class="fas fa-times" style="font-size: 2.5rem;
+               color: var(--white);
+               cursor: pointer;" onclick="this.parentElement.remove();"></i>
+            </div>
+            ';
+        }
+     }
+   ?>
 
 <!-- header section starts  -->
 
@@ -290,11 +303,11 @@ if(isset($message)){
          <img src="images/contact-img.svg" alt="">
       </div>
 
-      <form action="" method="post">
+      <form action="" method="POST">
          <h3>book a table</h3>
-         <input type="text" name="name" required class="box" maxlength="20" placeholder="enter your name">
-         <input type="number" name="number" required class="box" maxlength="20" placeholder="enter your number" min="0" max="9999999999" onkeypress="if(this.value.length == 10) return false">
-         <input type="number" name="guests" required class="box" maxlength="20" placeholder="how many guests" min="0" max="99" onkeypress="if(this.value.length == 2) return false">
+         <input type="text" name="name" method="POST" required class="box" maxlength="20" placeholder="enter your name">
+         <input type="number" name="number" method="POST" required class="box" maxlength="20" placeholder="enter your number" min="0" max="9999999999" onkeypress="if(this.value.length == 10) return false">
+         <input type="number" name="guests" method="POST" required class="box" maxlength="20" placeholder="how many guests" min="0" max="99" onkeypress="if(this.value.length == 2) return false">
          <input type="submit" name="send" value="send message" class="btn">
       </form>
 
@@ -338,31 +351,11 @@ if(isset($message)){
 
    </div>
 
-   <div class="credit"> &copy; copyright @ <?= date('Y'); ?> by <span>mr. web designer</span> | all rights reserved! </div>
+   <div class="credit"> &copy; copyright @ <?= date('Y'); ?> by <span>YAHYOBEK</span> | all rights reserved! </div>
 
 </section>
 
 <!-- footer section ends -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
